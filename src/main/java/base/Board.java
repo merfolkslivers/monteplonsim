@@ -17,12 +17,13 @@ public class Board {
     public ArrayList<Card> drop = new ArrayList<Card>();
 
     public void ride(Card card){
-        if(card.grade != this.vg.unit.grade +1) {
+        if((vg.unit.grade != 3 && card.grade != vg.unit.grade +1) || (vg.unit.grade == 3 && card.grade != 3)) {
             throw new RuntimeException("Something tried to ride a card at the wrong grade: " + card.toString() + " on top of " + this.vg.unit.toString());
         }
         if(vg.unit.grade == 1) {
             this.hand.add(this.deck.draw(1).get(0)); //starter vanguard draw effect
         }
+        //System.out.println("Riding " + card.toString());
         vg.soul.add(vg.unit);
         vg.unit = card;
         this.hand.remove(card);

@@ -57,7 +57,12 @@ public class MipuChooser {
         if(handtarget != -1) {
             soulTargets.remove(handtarget);
         }
-        return MelodyChooserCommon.getFirstMatchingInPriorityList(soulTargets, MelodyChooserCommon.fullPriority);
+        int soulTarget = MelodyChooserCommon.getFirstMatchingInPriorityList(soulTargets, MelodyChooserCommon.soulPriority);
+        if (soulTarget != -1)
+        {
+            return cards.indexOf(soulTargets.get(soulTarget));
+        }
+        return -1;
     }
 
 
