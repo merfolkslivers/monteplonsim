@@ -1,13 +1,11 @@
-package melody.cards;
+package luard.cards;
 
 import base.Board;
 import base.Card;
 import base.Circle;
 
-public class Starter extends Card {
-    public Starter(){
-        this.grade = 0;
-    }
+public class Branwen extends Card {
+    public Branwen() {this.grade = 1;}
     @Override
     public void onPlace(Circle c, Board b) {
 

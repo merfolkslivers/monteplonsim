@@ -17,7 +17,7 @@ public class Ourora extends Card {
         b.hand.add(b.deck.draw(1).get(0));
         int discardChoice = OuroraChooser.choose(b.hand, b);
         if(discardChoice == -1) throw new RuntimeException("Ourora did not choose a card to discard. Update your discard priority list.");
-        System.out.println("Ourora discarding: " + b.hand.get(discardChoice).toString());
+        //System.out.println("Ourora discarding: " + b.hand.get(discardChoice).toString());
         b.drop.add(b.hand.get(discardChoice));
         b.hand.remove(discardChoice);
     }

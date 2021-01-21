@@ -9,6 +9,7 @@ public class Circle {
     public ArrayList<Card> soul = new ArrayList<Card>();
     public Card unit;
     public boolean isTriggerZone = false;
+    public ArrayList<Card> markers;
 
     public Circle(int column, int row, boolean isVanguard) {
         this.column = column;

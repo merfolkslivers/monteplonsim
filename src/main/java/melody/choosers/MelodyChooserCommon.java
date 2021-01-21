@@ -1,19 +1,17 @@
 package melody.choosers;
 
-import base.Card;
-import base.ChooserCommon;
+import base.*;
 import melody.cards.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class MelodyChooserCommon extends ChooserCommon {
     public static ArrayList<Class> grade1Priority = new ArrayList<Class>(Arrays.asList(
             Mipu.class,
             Ourora.class,
             Sedna.class,
+            Coral1.class,
             FiveTogether.class,
             Cier.class
     ));
@@ -51,13 +49,16 @@ public class MelodyChooserCommon extends ChooserCommon {
             Caro3.class,
             Canon3.class,
             Fina3.class,
+            Fina2.class,
             FiveTogether.class
     ));
     public static ArrayList<Class> discardPriority = new ArrayList<Class>(Arrays.asList(
+            Starter.class,
             DrawTrigger.class,
             CritTrigger.class,
             HealTrigger.class,
             Ourora.class,
+            Coral1.class,
             FiveTogether.class,
             Fina2.class,
             Fina3.class,
@@ -69,6 +70,24 @@ public class MelodyChooserCommon extends ChooserCommon {
             Plon.class,
             Cier.class,
             Mipu.class
+    ));
 
+    public static ArrayList<Class> coral1Priority = new ArrayList<Class>(Arrays.asList(
+            Sonata3.class,
+            Sonata2.class,
+            Caro3.class,
+            Canon3.class,
+            Fina3.class,
+            Fina2.class,
+            FiveTogether.class,
+            DrawTrigger.class,
+            CritTrigger.class,
+            HealTrigger.class,
+            Ourora.class,
+            Coral1.class,
+            Sedna.class,
+            Plon.class,
+            Cier.class,
+            Mipu.class
     ));
 }

@@ -1,16 +1,16 @@
-package melody.cards;
+package base;
 
 import base.Board;
 import base.Card;
 import base.Circle;
 
-public class HealTrigger extends Card {
-    public HealTrigger(){
+public class Starter extends Card {
+    public Starter(){
         this.grade = 0;
     }
     @Override
     public void onPlace(Circle c, Board b) {
-        
+
     }
 
     @Override

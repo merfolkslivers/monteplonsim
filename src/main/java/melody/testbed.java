@@ -1,8 +1,6 @@
 package melody;
 
-import base.Board;
-import base.Card;
-import base.ChooserCommon;
+import base.*;
 import melody.cards.*;
 import melody.choosers.MelodyChooserCommon;
 
@@ -11,21 +9,22 @@ import java.util.Arrays;
 
 public class testbed {
 
-    static int numDraw = 4;
+    static int numDraw = 8;
     static int numHeal = 4;
-    static int numCrit = 8;
+    static int numCrit = 4;
     static int numCier = 4;
     static int numMipu = 4;
     static int numOuro = 0;
     static int numFive = 0;
-    static int numSedn = 4;
+    static int numSedn = 0;
+    static int numCor1 = 0;
     static int numSon2 = 4;
-    static int numFin2 = 6;
+    static int numFin2 = 4;
     static int numPlon = 4;
     static int numSon3 = 4;
-    static int numCar3 = 0;
-    static int numFin3 = 0;
-    static int numCan3 = 3;
+    static int numCar3 = 4;
+    static int numFin3 = 3;
+    static int numCan3 = 2;
 
     public static void main(String[] args) {
         int count1st = 0;
@@ -33,6 +32,8 @@ public class testbed {
         int count3rd = 0;
         int count4th = 0;
         int count5th = 0;
+        double noSonatas = 0;
+        double noCaros = 0;
         int cardsInHand = 0;
         int numSims = 1000000;
         for(int i = 0; i < numSims; i++) {
@@ -63,30 +64,28 @@ public class testbed {
             }
             count5th++;
             cardsInHand += b.hand.size();
+            for(Card c : b.vg.soul) {
+                if(c.getClass() == Sonata2.class || c.getClass() == Sonata3.class || c.getClass() == Caro3.class)
+                    noSonatas++;
+                if(c.getClass() == Caro3.class) noCaros++;
+            }
             //System.out.println(b.vg.unit);
-            System.out.println(b.vg.soul);
+            //System.out.println(b.vg.soul);
         }
 
-        System.out.println(divide(count1st, numSims));
-        System.out.println(divide(count2nd, numSims));
-        System.out.println(divide(count3rd, numSims));
-        System.out.println(divide(count4th, numSims));
-        System.out.println(divide((count1st + count2nd + count3rd + count4th), numSims));
-        System.out.println(divide(count5th, numSims));
+        System.out.println(TestbedCommon.divide(count1st, numSims));
+        System.out.println(TestbedCommon.divide(count2nd, numSims));
+        System.out.println(TestbedCommon.divide(count3rd, numSims));
+        System.out.println(TestbedCommon.divide(count4th, numSims));
+        System.out.println(TestbedCommon.divide((count1st + count2nd + count3rd + count4th), numSims));
+        System.out.println(TestbedCommon.divide(count5th, numSims));
         System.out.println(cardsInHand / (count5th));
-    }
-
-    public static double divide(int top, int bottom){
-        Double topi = (double) top;
-        Double boti = (double) bottom;
-        return ((Double) topi / boti);
+        System.out.println(noSonatas / count5th);
+        System.out.println(noCaros / count5th);
     }
 
     public static int simulateFirstRide(Board board) {
-        board.deck.botdeck(prepDeck());
-        board.deck.shuffle();
-        board.vg.unit = new Starter();
-        board.hand.addAll(board.deck.draw(5));
+        TestbedCommon.prepareStartingHand(board, prepDeck());
         ArrayList<Card> newHand = new ArrayList<Card>();
         if(MelodyChooserCommon.getFirstMatchingInPriorityList(board.hand, MelodyChooserCommon.grade1Priority) == -1) {
             //Mulligan until we get a Grade 1.
@@ -138,6 +137,7 @@ public class testbed {
     }
 
     public static int simulateTurn(Board board, boolean canDriveCheck) {
+        //RETRO: Make a priority list of cards to play, and place their call-or-ride functionality elsewhere
         boolean cardPlayedThisLoop = false;
         do {
             cardPlayedThisLoop = false;
@@ -156,13 +156,19 @@ public class testbed {
                     board.call(c, board.rightFront);
                     cardPlayedThisLoop = true;
                 } else if(board.vg.soul.size() >= 1) {
-                    board.drop.add(board.vg.soul.get(0));
-                    board.vg.soul.remove(0);
+                    int choice = MelodyChooserCommon.getFirstMatchingInPriorityList(board.vg.soul, MelodyChooserCommon.discardPriority);
+                    if(choice == -1) {
+                        throw new RuntimeException("We somehow failed to choose something to soulblast for Miep's cost.");
+                    }
+                    Card soulblast = board.vg.soul.get(choice);
+                    board.drop.add(soulblast);
+                    board.vg.soul.remove(soulblast);
                     board.call(c, board.rightFront);
                     cardPlayedThisLoop = true;
                 }
             } else if(c.getClass() == Cier.class) {
-                if (board.vg.soul.size() >= 1) {
+                int grade3Check = MelodyChooserCommon.getFirstMatchingInPriorityList(board.hand, MelodyChooserCommon.grade3Priority);
+                if (board.vg.soul.size() >= 1 && grade3Check != -1) {
                     board.drop.add(board.vg.soul.get(0));
                     board.vg.soul.remove(0);
                     board.call(c, board.rightFront);
@@ -176,6 +182,7 @@ public class testbed {
                 cardPlayedThisLoop = true;
             }
         } while(cardPlayedThisLoop == true);
+        //RETRO: Somewhere else?
         for(int drive = 0; drive < (board.vg.unit.grade == 3 ? 2 : 1); drive++) {
             if(canDriveCheck) {
                 Card driveCheck = board.deck.draw(1).get(0);
@@ -207,35 +214,24 @@ public class testbed {
 
     public static ArrayList<Card> prepDeck() {
         ArrayList<Card> deck = new ArrayList<Card>();
-        addToDeck(DrawTrigger.class, deck, numDraw);
-        addToDeck(HealTrigger.class, deck, numHeal);
-        addToDeck(CritTrigger.class, deck, numCrit);
-        addToDeck(Cier.class, deck, numCier);
-        addToDeck(Mipu.class, deck, numMipu);
-        addToDeck(Sonata2.class, deck, numSon2);
-        addToDeck(Fina2.class, deck, numFin2);
-        addToDeck(Plon.class, deck, numPlon);
-        addToDeck(Sonata3.class, deck, numSon3);
-        addToDeck(Caro3.class, deck, numCar3);
-        addToDeck(Fina3.class, deck, numFin3);
-        addToDeck(Canon3.class, deck, numCan3);
-        addToDeck(Ourora.class, deck, numOuro);
-        addToDeck(FiveTogether.class, deck, numFive);
-        addToDeck(Sedna.class, deck, numSedn);
+        TestbedCommon.addToDeck(DrawTrigger.class, deck, numDraw);
+        TestbedCommon.addToDeck(HealTrigger.class, deck, numHeal);
+        TestbedCommon.addToDeck(CritTrigger.class, deck, numCrit);
+        TestbedCommon.addToDeck(Cier.class, deck, numCier);
+        TestbedCommon.addToDeck(Mipu.class, deck, numMipu);
+        TestbedCommon.addToDeck(Sonata2.class, deck, numSon2);
+        TestbedCommon.addToDeck(Fina2.class, deck, numFin2);
+        TestbedCommon.addToDeck(Plon.class, deck, numPlon);
+        TestbedCommon.addToDeck(Sonata3.class, deck, numSon3);
+        TestbedCommon.addToDeck(Caro3.class, deck, numCar3);
+        TestbedCommon.addToDeck(Fina3.class, deck, numFin3);
+        TestbedCommon.addToDeck(Canon3.class, deck, numCan3);
+        TestbedCommon.addToDeck(Ourora.class, deck, numOuro);
+        TestbedCommon.addToDeck(FiveTogether.class, deck, numFive);
+        TestbedCommon.addToDeck(Sedna.class, deck, numSedn);
+        TestbedCommon.addToDeck(Coral1.class, deck, numCor1);
         if(deck.size() != 49) throw new RuntimeException("Deck size incorrect: " + deck.size());
         return deck;
-    }
-
-    public static void addToDeck(Class c, ArrayList<Card> deck, int numCards) {
-        for(int i = 0; i < numCards; i++) {
-            try {
-                deck.add((Card)c.newInstance());
-            } catch (InstantiationException e) {
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            }
-        }
     }
 
 
