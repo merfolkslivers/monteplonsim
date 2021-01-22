@@ -9,9 +9,9 @@ import java.util.Arrays;
 
 public class testbed {
 
-    static int numDraw = 8;
+    static int numDraw = 4;
     static int numHeal = 4;
-    static int numCrit = 4;
+    static int numCrit = 8;
     static int numCier = 4;
     static int numMipu = 4;
     static int numOuro = 0;
@@ -22,8 +22,8 @@ public class testbed {
     static int numFin2 = 4;
     static int numPlon = 4;
     static int numSon3 = 4;
-    static int numCar3 = 4;
-    static int numFin3 = 3;
+    static int numCar3 = 3;
+    static int numFin3 = 4;
     static int numCan3 = 2;
 
     public static void main(String[] args) {
@@ -32,11 +32,14 @@ public class testbed {
         int count3rd = 0;
         int count4th = 0;
         int count5th = 0;
+        int countPlon1st = 0;
+        int count6th = 0;
         double noSonatas = 0;
         double noCaros = 0;
         int cardsInHand = 0;
         int numSims = 1000000;
         for(int i = 0; i < numSims; i++) {
+            System.out.println("Beginning game " + i);
             boolean canDrive = i % 2 == 0;
             Board b = new Board();
             int result1 = simulateFirstRide(b);
@@ -56,12 +59,17 @@ public class testbed {
                 count3rd++;
                 continue;
             }
+            if(b.vg.unit.getClass() == Plon.class) {
+                countPlon1st++;
+            }
             simulateTurn(b, true);
+            count6th++;
             int result4 = simulateSecondRide(b); // Fourth Ride
             if(b.vg.unit.getClass() != Plon.class) {
                 count4th++;
                 continue;
             }
+            simulateTurn(b, true);
             count5th++;
             cardsInHand += b.hand.size();
             for(Card c : b.vg.soul) {
@@ -69,19 +77,21 @@ public class testbed {
                     noSonatas++;
                 if(c.getClass() == Caro3.class) noCaros++;
             }
+            System.out.println("End of game " + i);
             //System.out.println(b.vg.unit);
             //System.out.println(b.vg.soul);
         }
 
-        System.out.println(TestbedCommon.divide(count1st, numSims));
-        System.out.println(TestbedCommon.divide(count2nd, numSims));
-        System.out.println(TestbedCommon.divide(count3rd, numSims));
-        System.out.println(TestbedCommon.divide(count4th, numSims));
-        System.out.println(TestbedCommon.divide((count1st + count2nd + count3rd + count4th), numSims));
-        System.out.println(TestbedCommon.divide(count5th, numSims));
-        System.out.println(cardsInHand / (count5th));
-        System.out.println(noSonatas / count5th);
-        System.out.println(noCaros / count5th);
+        System.out.println("Missed ride 1: " + TestbedCommon.divide(count1st, numSims));
+        System.out.println("Missed ride 2: " + TestbedCommon.divide(count2nd, numSims));
+        System.out.println("Missed ride 3: " + TestbedCommon.divide(count3rd, numSims));
+        System.out.println("Plon not 4th ride: " + TestbedCommon.divide(count4th, numSims));
+        System.out.println("Percent failed: " + TestbedCommon.divide((count1st + count2nd + count3rd + count4th), numSims));
+        System.out.println("Percent success: " + TestbedCommon.divide(count5th, numSims));
+        System.out.println("Average cards in hand: " + (cardsInHand / (count5th)));
+        System.out.println("Average number of Sonatas in soul: " + (noSonatas / count5th));
+        System.out.println("Average number of Caros in soul: " + (noCaros / count5th));
+        System.out.println("Percentage of times 1st ride was Plon: " + TestbedCommon.divide(countPlon1st, count6th));
     }
 
     public static int simulateFirstRide(Board board) {
@@ -184,6 +194,7 @@ public class testbed {
         } while(cardPlayedThisLoop == true);
         //RETRO: Somewhere else?
         for(int drive = 0; drive < (board.vg.unit.grade == 3 ? 2 : 1); drive++) {
+            //System.out.println(board.vg.unit.toString() + " is drive checking " + (board.vg.unit.grade == 3 ? 2 : 1) + " times");
             if(canDriveCheck) {
                 Card driveCheck = board.deck.draw(1).get(0);
                 board.hand.add(driveCheck);

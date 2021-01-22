@@ -19,11 +19,11 @@ public class MelodyChooserCommon extends ChooserCommon {
             Sonata2.class,
             Fina2.class));
     public static ArrayList<Class> grade3Priority = new ArrayList<Class>(Arrays.asList(
+            Plon.class,
             Sonata3.class,
             Caro3.class,
             Fina3.class,
-            Canon3.class,
-            Plon.class
+            Canon3.class
             ));
     public static ArrayList<Class> repeatPriority = new ArrayList<Class>(Arrays.asList(
             Plon.class,

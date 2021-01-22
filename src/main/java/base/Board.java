@@ -35,10 +35,12 @@ public class Board {
             throw new RuntimeException("Something tried to call a card at the wrong grade: " + card.toString() + " on top of " + this.vg.unit.toString());
         }
         if(circle.unit != null){ //Move unit being called over to drop, if one is there.
-            drop.add(circle.unit);
+            circle.unit.retire(circle, this);
         }
         circle.unit = card;
         this.hand.remove(card);
         circle.unit.onPlace(circle, this);
     }
+
+
 }

@@ -5,7 +5,11 @@ import base.Card;
 import base.Circle;
 
 public class Owl extends Card {
-    public Owl(){this.grade = 1;}
+    public Owl(){
+        this.grade = 1;
+        this.power = 5000;
+        this.name = "Abyssal Owl";
+    }
     @Override
     public void onPlace(Circle c, Board b) {
 

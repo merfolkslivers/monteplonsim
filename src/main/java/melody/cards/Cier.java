@@ -24,9 +24,9 @@ public class Cier extends base.Card {
             Card card = cards.get(choice);
             cards.remove(card);
             b.hand.add(card);
-            b.deck.deck.addAll(cards);
-            b.deck.shuffle();
         }
+        b.deck.botdeck(cards);
+        b.deck.shuffle();
     }
 
     @Override

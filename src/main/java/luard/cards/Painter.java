@@ -5,7 +5,11 @@ import base.Card;
 import base.Circle;
 
 public class Painter extends Card {
-    public Painter() {grade = 1;}
+    public Painter() {
+        this.grade = 1;
+        this.power = 7000;
+        this.name = "Nightmare Painter";
+    }
     @Override
     public void onPlace(Circle c, Board b) {
 

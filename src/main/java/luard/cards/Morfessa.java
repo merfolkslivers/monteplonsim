@@ -5,7 +5,11 @@ import base.Card;
 import base.Circle;
 
 public class Morfessa extends Card {
-    public Morfessa() {this.grade = 2;}
+    public Morfessa() {
+        this.grade = 2;
+        this.power = 10000;
+        this.name = "Dragwizard, Morfessa";
+    }
     @Override
     public void onPlace(Circle c, Board b) {
 

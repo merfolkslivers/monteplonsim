@@ -25,10 +25,9 @@ public class Sedna extends Card {
             b.hand.remove(discard);
             b.hand.add(card);
             b.drop.add(discard);
-            b.deck.deck.addAll(cards);
-            b.deck.shuffle();
-
         }
+        b.deck.botdeck(cards);
+        b.deck.shuffle();
     }
 
     @Override
